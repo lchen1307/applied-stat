@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Staff
-description: A listing of all the course staff members.
+title: Textbook
+description: A listing of all the course textbooks.
 ---
 
-# Staff
+# Textbook
 
 Staff information is stored in the `_staffers` directory and rendered according to the layout file, `_layouts/staffer.html`.
 
