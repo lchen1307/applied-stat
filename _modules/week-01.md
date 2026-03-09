@@ -1,23 +1,23 @@
 ---
-title: Introduction to Java
+title: Applied Regression Analysis
 ---
 
-Sep 28
-: [Java & Git](#)
+Mar 5
+: Introduction & **Section 2**{: .label .label-purple }[Univariate linear regression]
   : [1.1](#)
 
-Sep 29
-: **Section**{: .label .label-purple }[Intro to Java](#)
+Mar 12
+: **Section**{: .label .label-purple }[None](#)
   : [Solution](#)
 
-Sep 30
-: [Variables & Objects](#)
+Mar 19
+: [None](#)
   : [1.2](#), [2.1](#)
 
-Oct 1
-: **Lab**{: .label .label-purple } [Intro to Java](#)
+Mar 26
+: **Lab**{: .label .label-purple } [None](#)
 
-Oct 2
-: [Tracing, IntLists, & Recursion](#)
-  : [2.1](#)
+Apr 2
+: [None](#)
+  : [None](#)
 : **HW 1 due**{: .label .label-red }
