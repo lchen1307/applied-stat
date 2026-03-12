@@ -22,8 +22,8 @@ The course covers two main topics: applied regression analysis and applied time 
 
 ## Textbook
 1. Applied Regression Analysis [PDF](#)
-2. Applied Time Series Analysis [PDF] (#)
-3. Applied Statistical Methods [PDF] (#)
+2. Applied Time Series Analysis [PDF](#)
+3. Applied Statistical Methods [PDF](#)
 
 ## Assignments
 
