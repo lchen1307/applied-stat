@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Textbook
+nav_exclude: true
 description: A listing of all the course textbooks.
 ---
 
