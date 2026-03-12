@@ -28,10 +28,6 @@ search_enabled: true
 heading_anchors: true
 permalink: pretty
 aux_links:
-  Long Chen:
-    - 'https://lchen1307.github.io'
-  Just the Class on GitHub:
-    - 'https://github.com/lchen1307/applied-stat'
 footer_content:
 
 # Collections for website data
