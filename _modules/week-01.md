@@ -14,11 +14,3 @@ Mar 19
 : [None](#)
   : [None](#)
 : **HW 1 2 due**{: .label .label-red }
-
-Mar 26
-: **Lab**{: .label .label-purple } [None](#)
-
-Apr 2
-: [None](#)
-  : [None](#)
-: **HW 1 due**{: .label .label-red }
