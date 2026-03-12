@@ -23,10 +23,13 @@ The course covers two main topics: applied regression analysis and applied time 
 </p>
 
 ## Staff
+
 👨‍🏫 Instructor: [Prof. LIU Jie](https://bs.ustc.edu.cn/chinese/profile-101.html), <jiel@ustc.edu.cn>
+
 🧑‍💻 Teaching Assistant: CHEN Long, <lchen1307@mail.ustc.edu.cn>
 
 ## Textbook
+
 1. Applied Regression Analysis [[PDF](https://pan.ustc.edu.cn/share/index/2dca41e9d5594be8bcb0?p=1)]
 2. Applied Time Series Analysis [[PDF](https://pan.ustc.edu.cn/share/index/0a86ad40f6c240d99a8c?p=1)]
 3. Applied Statistical Methods [[PDF](https://pan.ustc.edu.cn/share/index/708bd2c1fa9944168666?p=1)]
