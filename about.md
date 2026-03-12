@@ -20,6 +20,11 @@ description: >-
 
 The course covers two main topics: applied regression analysis and applied time series, each lasting 20 course hours. The main content includes univariate and multivariate linear regression, independent variable selection and stepwise regression, regression diagnosis, principal component regression, and regression with dummy variables; Time series models, AR/MA/ARMA models, model identification, parameter estimation, model validation, and model prediction.
 
+## Textbook
+1. Applied Regression Analysis [PDF](#)
+2. Applied Time Series Analysis [PDF] (#)
+3. Applied Statistical Methods [PDF] (#)
+
 ## Assignments
 
 Applied Regression Analysis: Chapter 2 (2.2, 2.5, 2.6)
