@@ -5,7 +5,7 @@ description: >-
     Course policies and information.
 ---
 
-# About
+# Applied Statistical Methods 
 {:.no_toc}
 
 ## Table of contents
