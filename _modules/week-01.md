@@ -4,7 +4,7 @@ title: Applied Regression Analysis
 
 Mar 5
 : **Section 1**{: .label .label-purple }[Introduction](#) & **Section 2**{: .label .label-purple }[Univariate linear regression](#)
-  : [1.1](#)
+  : [2.2](#), [2.5](#), [2.6](#)
 
 Mar 12
 : **Section**{: .label .label-purple }[None](#)
