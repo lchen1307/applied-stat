@@ -24,8 +24,8 @@ The course covers two main topics: applied regression analysis and applied time 
 
 ## Staff
 
-* Instructor: [Prof. LIU Jie](https://bs.ustc.edu.cn/chinese/profile-101.html), <jiel@ustc.edu.cn>
-* Teaching Assistant: CHEN Long, <lchen1307@mail.ustc.edu.cn>
+* Instructor: [Prof. LIU Jie](https://bs.ustc.edu.cn/chinese/profile-101.html), 📮 <jiel@ustc.edu.cn>
+* Teaching Assistant: CHEN Long, 📮 <lchen1307@mail.ustc.edu.cn>
 
 ## Textbook
 
