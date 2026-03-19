@@ -29,7 +29,7 @@ The course covers two main topics: applied regression analysis and applied time 
 
 ## Textbook
 
-1. Applied Regression Analysis [[PDF](https://pan.ustc.edu.cn/share/index/2dca41e9d5594be8bcb0?p=1)]marc_no=75477844415332722b6b6766363361786a5677737276696f63324f5278666a7561672b665874676c2f494d3d)]
+1. Applied Regression Analysis [[PDF](https://pan.ustc.edu.cn/share/index/2dca41e9d5594be8bcb0?p=1)]
 2. Applied Time Series Analysis [[PDF](https://pan.ustc.edu.cn/share/index/0a86ad40f6c240d99a8c?p=1)]
 3. Applied Statistical Methods [[PDF](https://pan.ustc.edu.cn/share/index/708bd2c1fa9944168666?p=1)]
 > All file extraction passcodes are STAT.
