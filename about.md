@@ -36,4 +36,4 @@ The course covers two main topics: applied regression analysis and applied time 
 
 ## Assignments
 
-Applied Regression Analysis: Chapter 2 (2.2, 2.5, 2.6, 2.8, 2.9, 2.10)
+Applied Regression Analysis: Chapter 2 (2.2, 2.5, 2.6, 2.8, 2.9, 2.10, 2.11, 2.12, 2.14), Chapter 3 (3.3)
