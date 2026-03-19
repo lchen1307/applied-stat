@@ -12,7 +12,7 @@ Mar 12
 
 Mar 19
 : [None](#)
-  : **HW 3**{: .label .label-blue }
+  : **HW 3**{: .label .label-blue }[Multivariate linear regression](#)
 : **HW 1-2 due**{: .label .label-red }
 
 Mar 26
