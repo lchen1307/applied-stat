@@ -3,7 +3,7 @@ title: Applied Regression Analysis
 ---
 
 Mar 5
-: **Section 1**{: .label .label-purple }[Introduction](https://github.com/lchen1307/applied-stat/blob/main/assets/files/slides/%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E6%A6%82%E8%BF%B0%20.ppt)
+: **Section 1**{: .label .label-purple }[Introduction](https://github.com/lchen1307/applied-stat/blob/main/assets/files/slides/section-1.pdf)
   : **HW 1**{: .label .label-blue } [2.2](#), [2.5](#), [2.6](#)
 
 Mar 12
