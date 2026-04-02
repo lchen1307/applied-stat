@@ -20,7 +20,7 @@ Mar 26
   : [None](#)
 
 Apr 2
-: [None](#)
+: **Section 4**{: .label .label-purple }[Violations of Basic Assumptions](https://lchen1307.github.io/applied-stat/assets/files/slides/section-4.pdf)
   : **HW 4**{: .label .label-blue } [None](#)
 
 Apr 9
