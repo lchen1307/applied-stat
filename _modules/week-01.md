@@ -24,6 +24,6 @@ Apr 2
   : **HW 4**{: .label .label-blue } [3.6](#), [3.7](#), [3.8](#), [4.4](#), [4.5](#)
 
 Apr 9
-: [None](#)
+: **Section 5**{: .label .label-purple }[Independent Variable Selection and Stepwise Regression](https://lchen1307.github.io/applied-stat/assets/files/slides/section-5.pdf)
   : [None](#)
 : **HW 3-4 due**{: .label .label-red }
