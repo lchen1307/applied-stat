@@ -26,6 +26,7 @@ schedule:
         end: 12:10 PM
         location: 1008 Management Science Building
   - name: Friday
+    events: []  # 显式声明周五为空，防止周六前移
   - name: Saturday
     events:
       - name: Lab
