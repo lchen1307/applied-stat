@@ -28,8 +28,8 @@ schedule:
   - name: Friday
   - name: Saturday
     events:
-    - name: Lab
-      start: 2:30 PM
-      end: 4:45 PM
-      location: FinTech Lab (Week 7 - Week 13)
+      - name: Lab
+        start: 2:30 PM
+        end: 4:45 PM
+        location: FinTech Lab (Week 7 - Week 13)
 ---
