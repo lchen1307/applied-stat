@@ -29,7 +29,7 @@ Apr 9
 : **HW 3-4 due**{: .label .label-red }
 
 Apr 16
-: **Section 6**{: .label .label-purple }[Multi-Collinearity](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-1.pdf)
+: **Section 6**{: .label .label-purple }[Multi-Collinearity](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-1.pdf), **Section 7**{: .label .label-purple }[Nonlinear Regression](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-2.pdf)
   : [None](#)
 
 Apr 23
@@ -39,5 +39,3 @@ Apr 23
 Apr 30
 : [None](#)
   : [None](#)
-
-
