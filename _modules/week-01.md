@@ -31,7 +31,7 @@ Apr 9
 Apr 16
 : **Section 6**{: .label .label-purple }[Multi-Collinearity](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-1.pdf)
   : [None](#)
-: **Section 7**{: .label .label-purple }[Nonlinear Regression](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-2.pdf)
+: **Section 7**{: .label .label-purple }[Regression with Qualitative Variables](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-3.pdf)
 
 Apr 23
 : [None](#)
