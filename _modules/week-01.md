@@ -24,10 +24,10 @@ Apr 2
   : **HW 4**{: .label .label-blue } [3.6](#), [3.7](#), [3.8](#), [4.4](#), [4.5](#)
 
 Apr 9
-: **Section 5**{: .label .label-purple }[Independent Variable Selection and Stepwise Regression](https://lchen1307.github.io/applied-stat/assets/files/slides/section-5.pdf)
+: **Section 5**{: .label .label-purple }[Independent Variable Selection](https://lchen1307.github.io/applied-stat/assets/files/slides/section-5.pdf)
   : [None](#)
 : **HW 3-4 due**{: .label .label-red }
 
 Apr 16
-: **Section 6**{: .label .label-purple }[Multi-collinearity](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-1.pdf)
+: **Section 6**{: .label .label-purple }[Multi-Collinearity](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-1.pdf)
   : [None](#)
