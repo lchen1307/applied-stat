@@ -31,3 +31,13 @@ Apr 9
 Apr 16
 : **Section 6**{: .label .label-purple }[Multi-Collinearity](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-1.pdf)
   : [None](#)
+
+Apr 23
+: [None](#)
+  : [None](#)
+
+Apr 30
+: [None](#)
+  : [None](#)
+
+
