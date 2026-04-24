@@ -35,5 +35,9 @@ Apr 16
 : **Section 8**{: .label .label-purple }[Nonlinear regression](https://lchen1307.github.io/applied-stat/assets/files/slides/appendix-2.pdf)
 
 Apr 18
-: **Lab 1**{: .label .label-green }[None](#)
+: **Lab 1**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/Lab-2.pdf)
   : [Dataset](https://lchen1307.github.io/applied-stat/assets/files/lab/dataset.pdf)
+
+Apr 25
+: **Lab 2**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/Lab-2.pdf)
+  : [Dataset](#)
