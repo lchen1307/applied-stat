@@ -28,6 +28,7 @@ schedule:
         start: 9:45 AM
         end: 12:10 PM
         location: 1008 Management Science Building
+        color: purple
   - name: Friday
     events: []  # 显式声明周五为空，防止周六前移
   - name: Saturday
@@ -36,4 +37,5 @@ schedule:
         start: 2:30 PM
         end: 4:45 PM
         location: FinTech Lab (Week 7 - Week 13)
+        color: blue
 ---
