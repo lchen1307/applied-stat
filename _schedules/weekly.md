@@ -10,11 +10,11 @@ timeline:
   - '11:20 AM'
   - '12:10 PM'
   - '2:00 PM'
-  - '2:45 PM'
-  - '3:35 PM'
-  - '4:40 PM'
-  - '4:45 PM'
-  - '5:30 PM'
+  - '2:30 PM'
+  - '3:20 PM'
+  - '4:10 PM'
+  - '5:00 PM'
+  - '5:50 PM'
 schedule:
   - name: Monday
   - name: Tuesday
