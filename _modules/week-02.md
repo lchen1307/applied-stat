@@ -8,6 +8,9 @@ Apr 16
 
 Apr 23
 : **Section 2**{: .label .label-purple }[Time Series Preprocessing](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-2.pdf)
-  : **HW 5**{: .label .label-blue } [2.4](#)
+  : **HW 5**{: .label .label-blue } [2.4](#), [3.1](#)
+
+
+Apr 30
 : **Section 3**{: .label .label-purple }[Stationary Time Series Analysis](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-3.pdf)
-  : **HW 5**{: .label .label-blue } [3.1](#)
+  : **HW 5**{: .label .label-blue } [3.2](#), [3.3](#), [3.4](#)
