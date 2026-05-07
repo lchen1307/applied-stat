@@ -13,4 +13,16 @@ Apr 23
 
 Apr 30
 : **Section 3**{: .label .label-purple }[Stationary Time Series Analysis](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-3.pdf)
-  : **HW 5**{: .label .label-blue } [3.2](#), [3.3](#), [3.4](#)
+  : **HW 6**{: .label .label-blue } [3.2](#), [3.3](#), [3.4](#)
+
+May 7
+: **Section 3**{: .label .label-purple }[Stationary Time Series Analysis](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-3.pdf)
+  : **HW 7**{: .label .label-blue } [None](#)
+
+May 14
+: [None](#)
+  : [None](#)
+
+May 21
+: [None](#)
+  : [None](#)
