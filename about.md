@@ -43,4 +43,4 @@ The course covers two main topics: applied regression analysis and applied time 
     * Chapter 4 (4.4, 4.5)
 * Applied Time Series Analysis:
     * Chapter 2 (2.4)
-    * Chapter 3 (3.1, 3.2, 3.3, 3.4) 
+    * Chapter 3 (3.1, 3.2, 3.3, 3.4, 3.7, 3.9, 3.11(1)(3)(5), 3.12, 3.14) 
