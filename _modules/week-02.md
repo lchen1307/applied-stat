@@ -16,7 +16,7 @@ Apr 30
   : **HW 6**{: .label .label-blue } [3.2](#), [3.3](#), [3.4](#)
 
 May 7
-: **Section 3**{: .label .label-purple }[Deterministic Analysis of Nonstationary Sequences](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-4.pdf)
+: **Section 4**{: .label .label-purple }[Deterministic Analysis of Nonstationary Sequences](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-4.pdf)
   : **HW 7**{: .label .label-blue } [None](#)
 : **HW 5-6 due**{: .label .label-red }
 
