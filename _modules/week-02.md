@@ -18,6 +18,7 @@ Apr 30
 May 7
 : **Section 3**{: .label .label-purple }[Stationary Time Series Analysis](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-3.pdf)
   : **HW 7**{: .label .label-blue } [None](#)
+: **HW 5-6 due**{: .label .label-red }
 
 May 14
 : [None](#)
