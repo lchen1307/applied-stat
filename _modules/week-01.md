@@ -44,4 +44,4 @@ Apr 25
 
 May 9
 : **Lab 3**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/lab-3.pdf)
-  : [Dataset](#)
+  : [Dataset](https://pan.ustc.edu.cn/share/index/002b660dc6bf4b83b060)
