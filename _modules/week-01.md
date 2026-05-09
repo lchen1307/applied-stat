@@ -43,5 +43,5 @@ Apr 25
   : [Dataset](#)
 
 May 9
-: **Lab 2**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/Lab-3.pdf)
+: **Lab 3**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/lab-3.pdf)
   : [Dataset](#)
