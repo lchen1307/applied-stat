@@ -42,6 +42,10 @@ Apr 25
 : **Lab 2**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/Lab-2.pdf)
   : [Dataset](#)
 
+May 9
+: **Lab 3**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/Lab-2.pdf)
+  : [Dataset](#)
+
 May 16
-: **Lab 3**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/lab-3.pdf)
+: **Lab 4**{: .label .label-green }[None](https://lchen1307.github.io/applied-stat/assets/files/lab/lab-3.pdf)
   : [Dataset](https://pan.ustc.edu.cn/share/index/f28940b467864f3f863f)
