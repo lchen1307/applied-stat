@@ -24,7 +24,7 @@ May 14
 : **Section 5**{: .label .label-purple }[Stochastic Analysis of Non-Stationary Sequences](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-5.pdf)
   : [None](#)
 
-May 28
-: **Lab 5**{: .label .label-green }[Time Series Analysis](#)
+May 23
+: **Lab 5**{: .label .label-green }[Time Series Analysis](https://lchen1307.github.io/applied-stat/assets/files/lab/09-ch9.Rmd)
   : [None](#)
   
