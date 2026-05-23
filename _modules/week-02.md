@@ -21,14 +21,10 @@ May 7
 : **HW 5-6 due**{: .label .label-red }
 
 May 14
-: [None](#)
-  : [None](#)
-
-May 21
-: [None](#)
+: **Section 5**{: .label .label-purple }[Stochastic Analysis of Non-Stationary Sequences](https://lchen1307.github.io/applied-stat/assets/files/time-series/time-series-5.pdf)
   : [None](#)
 
 May 28
 : **Lab 5**{: .label .label-green }[Time Series Analysis](#)
-  : [Dataset](#)
+  : [None](#)
   
