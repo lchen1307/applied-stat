@@ -1,0 +1,331 @@
+# 第6章：线性回归 {-#ch6}
+
+```{r message=FALSE,warning=FALSE}
+### 数据准备 ###
+# 清空工作空间
+rm(list = ls())
+```
+
+## 案例引入 {-}
+
+随着“互联网+”和大数据时代的到来，越来越多的数据科学公司如雨后春笋般涌现。传统行业也面临着“互联网+”时代下的创新转型，对于数据分析及相关领域有大量人才需求，各行各业与数据分析相关的招聘岗位越来越多。
+
+在数据分析相关岗位的招聘中，合理定位岗位薪资，找出与岗位薪资挂钩的特殊技能尤其关键。在市场层面上，可以了解数据分析人才市场现状，合理化市场资源配置；在公司层面上，可以为公司招聘提供借鉴，为数据分析人才定制薪资提供参考；对于应聘者而言，能够更科学地进行职业测评，实现准确地自我定位；对于高校来说，能够明确学生的培养方向，优化应用统计及数据分析方向人才培养方案。
+
+本案例使用数据分析岗位招聘薪酬数据集。该数据收集自各大招聘网站发布的数据分析岗位招聘的相关信息，共包含了6682条岗位招聘数据。数据集的每一列分别对应：岗位薪资、是否要求掌握R、SPSS、Excel、Python、MATLAB、Java、SQL、SAS、Stata、EViews、Spark、Hadoop、公司类别、公司规模、学历要求、工作经验、公司地点。数据变量说明表如下所示：
+
+|变量类型|变量名称|详细说明|取值范围|
+|:----|:----|:----|:----|
+|因变量|薪资|单位：元／月|1500-5000元|
+|自变量|软件要求|R|共2个水平|0（不要求），1（要求）|
+| | |SPSS|共2个水平| |
+| | |Excel|共2个水平| |
+| | |Python|共2个水平| |
+| | |MATLAB|共2个水平| |
+| | |Java|共2个水平| |
+| | |SQL|共2个水平| |
+| | |SAS|共2个水平| |
+| | |Stata|共2个水平| |
+| | |EViews|共2个水平| |
+| | |Spark|共2个水平| |
+| | |Hadoop|共2个水平| |
+| |公司类别|共6个水平|合资、外资、民营公司等|
+| |公司规模|共6个水平|少于50人、50-500人等|
+| |学历要求|共7个水平|无、中专、高中、大专等|
+| |工作经验|单位：年|0-10年|
+| |地区|共2个水平|北上深、非北上深|
+
+读入数据，将数据命名为`jobinfo`，并绘制岗位薪资的频数直方图，解读图中的结果。
+
+```{r}
+library(ggplot2)
+jobinfo <- read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter6/jobinfo_ch7.csv", fileEncoding = "utf-8")
+```
+
+
+```{r ch6-plot1, eval = F}
+ggplot(data = jobinfo, aes(x=aveSalary)) +
+    geom_histogram(binwidth = 2000,fill="gold") +
+    labs(y="频数",x = "岗位薪资") +
+    theme_bw() + 
+    theme(panel.border=element_blank(),
+          text = element_text(family = "STXihei"),
+          axis.title = element_text(size = 12),
+          axis.text = element_text(size = 11))
+```
+
+![](https://tva1.sinaimg.cn/large/0081Kckwly1gky6fivvpwj311c0qo75i.jpg)
+
+该数据中的因变量薪资呈右偏分布，如图所示。最高的月薪为19999.5元/月，对应的岗位是一个规模为1000-5000人的国企，这个岗位要求申请人有2年的工作经验。从整体情况来看，有75%的岗位月薪低于10000元。
+
+### 岗位学历要求对薪资水平是否有影响 {-}
+
+通过箱线图，探究岗位学历要求对薪资水平是否有影响。（提示：为了使得箱线图更加美观，可以对因变量取对数）
+
+```{r}
+# 利用箱线图画出，学历vs对数平均薪资的分布，箱体的宽度越宽表示样本量越多
+# 将学历转化为因子型变量，便于画图
+jobinfo$学历要求 = factor(jobinfo$学历要求,levels=c("中专","高中","大专","无","本科","研究生"))
+jobinfo$对数薪资 <- log(jobinfo$aveSalary)
+```
+
+```{r ch6-plot2, eval = F}
+# 绘制箱线图
+ggplot(jobinfo,aes(学历要求,对数薪资)) + 
+        geom_boxplot(varwidth = TRUE, fill = c(rep("grey",4),rep("gold",2))) + 
+        labs(x="学历要求", y = "对数薪资")+
+    theme_bw() + 
+    theme(panel.border=element_blank(),
+          text = element_text(family = "STXihei"),
+        axis.title = element_text(size = 13),
+          axis.text = element_text(size = 12))
+```
+
+![](https://tva1.sinaimg.cn/large/0081Kckwly1gky6fipn4uj311c0qo75l.jpg)
+
+从图中可以看到，在五种学历要求中，研究生学历的薪资中位数最高，达到了8999.75元，对应的对数薪资为9.10；其次为本科学历的岗位，达到了8999.50元；薪资水平最低的为中专学历，月薪仅有5249.50元。水平最高的学历岗位比最低的月薪高出了3750.25元，但是仅根据描述分析，我们仍然不能说明学历对薪资有统计意义上的显著影响。
+
+### Python和SPSS要求与否对薪资水平是否有影响 {-}
+
+通过箱线图，分别探究岗位对于Python和SPSS要求与否对薪资水平是否有影响。
+
+```{r ch6-plot3, eval = F}
+ggplot(jobinfo,aes(as.factor(Python),对数薪资)) + 
+        geom_boxplot(fill = c("grey","gold")) + 
+        labs(x="是否要求会使用Python", y = "对数薪资") +
+            theme_bw() + 
+theme(panel.border=element_blank(),
+      text = element_text(family = "STXihei"),
+                      axis.title = element_text(size = 15),
+          axis.text = element_text(size = 14))
+```
+
+![](https://tva1.sinaimg.cn/large/0081Kckwly1gky6fiitvsj311c0qogmu.jpg)
+
+```{r ch6-plot4, eval = F}
+ggplot(jobinfo,aes(as.factor(SPSS),对数薪资)) + 
+        geom_boxplot(fill = c("grey","gold")) + 
+        labs(x="是否要求会使用SPSS", y = "对数薪资") +
+            theme_bw() + 
+theme(panel.border=element_blank(),
+      text = element_text(family = "STXihei"),
+                      axis.title = element_text(size = 15),
+          axis.text = element_text(size = 14))
+```
+
+![](https://tva1.sinaimg.cn/large/0081Kckwly1gky6fi62skj311c0qogmt.jpg)
+
+从数目上看，要求掌握Python的岗位占比为4.4%，要求掌握SPSS的岗位占比约为8.0%。从箱线图中可以看出，要求掌握这两种软件的薪资中位数均高于不要求掌握该软件的岗位。
+
+## 6.9 模型实现{-}
+
+### 6.9.2 实例分析{-}
+
+#### 建立线性模型 {-}
+
+首先以岗位薪资为因变量，以地区、公司类别、公司规模、学历、经验要求以及12种软件需求为自变量，探求这些比变量对于薪资的影响，建立回归模型，并利用summary函数查看回归结果。
+
+需要注意，在在建立回归模型之前，我们需要利用公司所在地、公司类别、公司规模、学历要求创建虚拟变量。回归时，公司类别以国企为基准，公司规模以少于50人为基准，学历以无为基准。
+
+```{r}
+# 数据预处理
+## 转换为factor型变量，地区以河北为基准，公司类别以国企为基准，公司规模以少于50人为基准，学历以无为基准
+jobinfo$公司类别 <- factor(jobinfo$公司类别, levels = c("国企","合资","外资","上市公司","民营公司","创业公司"))
+jobinfo$公司规模 <- factor(jobinfo$公司规模, levels = c("少于50人","50-500人","500-1000人","1000-5000人","5000-10000人","10000人以上"))
+jobinfo$学历要求 <- factor(jobinfo$学历要求, levels = c("无","中专","高中","大专","本科","研究生"))
+
+## 软件要求
+for (i in c(2:13)){
+        jobinfo[,i] <- as.factor(jobinfo[,i])
+}
+```
+
+```{r}
+## 建立线性模型
+lm.fit1 = lm(aveSalary ~ ., data = jobinfo)
+## 查看回归结果
+summary(lm.fit1)
+```
+
+#### 模型诊断 {-}
+
+对任务四中的模型进行诊断，找出可能存在的问题。
+
+```{r ch6-plot5, eval = F}
+## 对线性模型进行回归诊断
+# 将画布分为2*2的4块
+par(mfrow=c(2,2))
+plot(lm.fit1, which = c(1:4)) 
+```
+
+![](https://tva1.sinaimg.cn/large/0081Kckwly1gky6fi1jljj311c0qoaec.jpg)
+
+左上图为残差与拟合值的散点图，若因变量和自变量呈现线性相关的关系，则残差值与拟合值没有任何的系统关联。图中所示残差并不随着拟合值的变化呈现规律性变化，因此基本满足线性假设；右上图为正态Q-Q图，当因变量服从正态分布时，图中的散点应该落在呈45度倾斜的直线上。根据图示，模型中的残差项在较大值的部分偏离直线，因此较大程度上偏离了正态分布；左下图为位置尺度图，若满足同方差假定，则水平线周围的点应呈现无规律随机分布，根据图中所示，随着拟合值增大，标准化残差呈现升高的规律，表明存在一定的异方差问题；右下图为样本点的库克距离，其最大值未超过0.05，因此认为样本中不存在异常点。
+
+#### 模型修正与模型选择 {-}
+
+可将因变量进行对数变换，重新拟合回归模型，使用BIC准则对变量进行选择，并对变量选择后的模型结果进行解读。
+
+```{r}
+## 计算对数因变量
+jobinfo$对数薪资 <- log(jobinfo$aveSalary)
+# 建立对数线性模型，剔除平均薪资变量
+lm.fit2 = lm(对数薪资 ~ .-aveSalary, data = jobinfo)
+summary(lm.fit2)
+```
+- 在控制其他因素不变的情况下，对数据分析人员的工作经验年限要求每多一年，相应岗位的薪资就平均高出8.4%。
+
+- 说明要求掌握Python的岗位，薪资平均比不要求掌握Python的岗位高出11.1%，这和任务三中的描述分析趋势是吻合的。
+
+- 自变量“学历要求”的基准水平为“无”，那么“研究生”对应的系数0.202可解读为：要求研究生学历的岗位薪资平均比不要求任何学历的岗位高20.2%。
+
+```{r}
+par(mfrow=c(2,2))
+plot(lm.fit2, which = c(1:4)) 
+```
+
+```{r}
+# 多重共线性的诊断
+# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
+# install.packages("DAAG", type = "binary")
+
+library(DAAG)
+vif(lm.fit2)
+```
+
+结论：所有变量的 VIF 值都小于 10，因此认为自变量不存在较强的多重共线性。
+
+```{r}
+## 使用BIC准则选择模型
+n <- nrow(jobinfo)
+lm.bic <- step(lm.fit2, direction = "both", k = log(n), trace = F)
+summary(lm.bic)
+```
+
+step 函数中的相关参数说明：
+
+1. direction 选择模型的方法：forward 向前选择，back 向后选择、both 逐步选择
+2. k 逐步回归的准则：k = 2 表示 AIC，k = logn 表示 BIC
+3. trace = F 不打印中间过程
+
+
+结论解读：
+
+1. 从直观上看，软件从 12 个删减到 5 个，公司类别和公司规模全都被删了，学历、经验和地区全都保留。
+2. 薪资差异主要来自岗位本身的要求（技能、学历、经验、城市），而不是公司性质。一家小创业公司的资深算法工程师，可能比大国企的初级文员薪资高得多。
+3. 要求 Excel 的岗位薪资反而更低，而 Hadoop 溢价最高，大数据相关技能稀缺，薪资溢价显著。
+
+
+注意事项：
+
+因变量是 log(薪资)，所以系数要按"百分比"解读：系数 ≈ 该变量变化时，薪资变化的百分比（准确公式：薪资倍数 = e^系数，但当系数较小时直接看百分比就够了）
+
+
+#### 模型预测 {-}
+
+使用任务六得到的模型，对新样本的薪资水平进行预测。假设有一份北京市上市公司数据分析岗位的工作，该公司为1500人的中小型公司，这个工作要求申请人掌握R、Python、SQL和Hadoop的技能，并且有至少3年的工作经验，最低学历为硕士。希望通过模型预测该岗位的薪资。
+
+```{r}
+## 新样本
+testdata <- data.frame(R = 1, SPSS = 0, Excel = 0, Python = 1, MATLAB = 0, Java = 0, SQL = 1, SAS = 0, Stata = 0, EViews = 0, Spark = 0, Hadoop = 1, 公司类别 = "上市公司", 公司规模 = "1000-5000人", 学历要求 = "研究生", 工作经验 = 3, 地区 = "北上深")
+
+## 将软件技能转换为factor类型
+for (i in c(1:12)) {
+    testdata[,i] <- as.factor(testdata[,i])
+}
+logsalary_hat <- predict(lm.bic, newdata = testdata)  # 预测值
+sigma_hat2 <- sum(lm.bic$residuals^2)/lm.bic$df.residual  # sigma^2估计值
+y_hat <- exp(logsalary_hat + sigma_hat2/2)  # 
+cat("平均薪资水平约为", round(y_hat, 2), "元/月")
+```
+
+根据模型的预测结果，该工作岗位薪资约为18288.72元/月。
+
+
+## 习题答案 {-}
+
+### 案例背景{-}
+
+截至2016年5月25日的北京住宅年内交易数据显示，北京市已经全面进入二手房时代。二手房定价是二手房交易过程中重要的环节之一。若能根据住房的特征，更准确地估计价格，住房业主将会获得更准确的市场定位。
+
+数据集`house.csv`为来自某二手房中介网站的北京在售二手房2016年5月的相关数据，共包括单位面积房价（price）、城区（CATE）、卧室数（bedrooms）、厅数（halls）、房屋面积（AREA）、楼层（floor）、是否临近地铁（subway）、是否是学区房（school）这几个变量。以房价为因变量，在R中建立普通线性回归模型，并对模型结果进行诊断。
+
+### 题目 6.2 {-}
+
+#### 数据读入与预处理
+
+读入数据，命名为`dat0`，并将“厅数”变量处理为“有厅”、“无厅”和“其他”三个等级。
+
+```{r}
+# 清除工作环境
+cat("\014")    # 相当于 Ctrl + L
+rm(list=ls())
+dat0 <- read.csv("../data/chapter6/house.csv",header=T,fileEncoding = "utf-8") #读入数据
+
+# 处理厅数 (强调一下：分类数据的缺失值处理)
+n=dim(dat0)[1]
+style=rep("其他",n)
+style[which(dat0$halls==0)]="无厅"        
+style[which(dat0$halls>0)]="有厅"     
+style=factor(style,levels=c("无厅","有厅"))
+dat0 <- cbind(dat0,style)  
+```
+
+#### 模型的建立与诊断{-}
+
+以房价为因变量，建立普通线性回归模型，并对模型结果进行诊断。
+
+```{r}
+lm1 <- lm(price ~ CATE + school + subway + style + floor + bedrooms + AREA, data = dat0)
+summary(lm1)            #回归结果展示
+```
+
+```{r ch6-plot6, eval = F}
+par(mfrow=c(2,2))           #画2*2的图
+plot(lm1,which=c(1:4))      #模型诊断图，存在异方差现象，对因变量取对数
+```
+
+![](https://tva1.sinaimg.cn/large/0081Kckwly1gky6fhsdcjj311c0qotdo.jpg)
+
+根据模型诊断结果可以看出，残差近似满足零均值假定，图中所示残差并不随着拟合值的变化呈现规律性变化，因此基本满足线性假设；右上图为正态Q-Q图，当因变量服从正态分布时，图中的散点应该落在呈45度倾斜的直线上。根据图示，模型中的残差项在较大值的部分偏离直线，因此一定程度上偏离了正态分布；左下图为位置尺度图，若满足同方差假定，则水平线周围的点应呈现无规律随机分布，根据图中所示，随着拟合值增大，标准化残差呈现升高的规律，表明存在一定的异方差问题；右下图为样本点的库克距离，其最大值未超过0.05，因此认为样本中不存在异常点。
+
+### 题目 6.3 {-}
+
+对于任务二中的数据，建立对数线性模型，并加入城区与学区的交互项，对系数进行解读。
+
+```{r}
+lm2 <- lm(log(price) ~ CATE * school + subway + style + floor + bedrooms + AREA, data = dat0)   
+summary(lm2)            #回归结果展示
+```
+
+```{r}
+par(mfrow=c(2,2))           #画2*2的图
+plot(lm2,which=c(1:4))      #模型诊断图，存在异方差现象，对因变量取对数
+```
+
+
+经过对数处理，异方差问题得到了极大改善；Cook距离表现正常，表明没有异常点。另外，模型仍然是显著的（F检验通过了），模型的拟合程度有略微上升（调整的$R^2=0.6108$）。
+
+当考虑了“城区×学区”的交互效应后，一个明显的变化是：学区变量系数估计变成负数。由于“城区”、“城区×学区”两个因素的基准组均为石景山区，因此对应的结论是：在石景山区，学区房比非学区房的单位面积房价低。可以从石景山区的学区房比例和学区资源等角度解释原因。
+
+其他变量的解读示例：在保持其他变量不变的情况下，临近地铁的房价比不临近地铁的房价更贵；与高楼层的房源相比，中低楼层的二手房房价更高。
+
+### 题目 6.4 {-}
+
+使用BIC准则对任务三的模型进行选择，使用最终的模型进行新样本单位面积房价的预测。其中，预测样本为一间海淀区的两室一厅学区房，其在楼中的低楼层，并且临近地铁，房屋面积为70平方米。
+
+```{r}
+lm3.bic <- step(lm2, k = log(nrow(dat0)), trace = F)
+summary(lm3.bic)
+```
+
+
+```{r}
+newdata <- data.frame(CATE = "海淀", bedrooms = 2, halls = 1, AREA = 70, floor = "low", subway = 1, school = 1, style = "有厅")
+logprice_hat <- predict(lm3.bic, newdata = newdata)  # 预测值
+sig_hat2 <- sum(lm3.bic$residuals^2)/lm3.bic$df.residual  # sigma^2估计值
+y_hat <- exp(logprice_hat + sig_hat2/2)  # 
+cat("单位面积房价约为", round(y_hat, 2), "万元/平方米")
+```
+
+使用任务三中的模型可以得到，新样本的单位面积房价预测值约为7.98万元/平方米。

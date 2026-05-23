@@ -1,0 +1,708 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# 第2章：R语言中的数据管理与预处理 {#ch2 .unnumbered}
+
+## 案例引入 {.unnumbered}
+
+电影是大众喜闻乐见的一种艺术形式。如今，电影市场中百花齐放，喜剧片、动作片、科幻片、动画片等电影类型争奇斗艳，各类元素文化在电影中都得以展现。
+
+随着我国人民生活水平的提高，电影也成为不少家庭娱乐项目中的一个重要组成部分。从2008年的票房冠军《赤壁上》（2.7亿票房），再到2019年的票房冠军《哪吒之魔童降世》（49.3亿票房），中国电影票房一直保持快速增长态势。据《全球电影产业发展报告(2019)》统计数据显示，中国电影产业于2018年发展为全球第二。中国电影市场蓬勃发展的同时，也因为前景光明，利润巨大，从而导致行业规范模糊，从业人员鱼龙混杂，以至于烂片层出不穷，受观众诟病。电影品质良莠不齐，有的电影在时间的长河中历久弥新，有的电影却消失得无声无息。高评分电影反映了观众对于不同题材的喜好，针对高评分电影进行统计分析可以为日后电影拍摄提供有效支持。
+
+本章节采用的是某电影榜单上排名top250的电影数据，数据集包含250部电影的名称、评分等数据。数据的变量说明表如下所示：
+
+| 变量类型     | 变量名   | 详细说明         | 取值范围               |
+|:-------------|:---------|:-----------------|:-----------------------|
+| 属性         | score    | 电影评分         | [8.3,9.6]              |
+|              | type     | 影片类型         | 爱情、动作、动画等     |
+|              | duration | 电影时长（分钟） | [84,131]               |
+|              | rank     | 电影排名         | [1,250]                |
+|              | nation   | 制片国家/地区    | 中国，美国，英国等     |
+| 档期         | showtime | 电影上映时期     | [1931/1/30,2017/11/24] |
+|              | Year     | 电影上映年份     | [1931,2017]            |
+| 导演基本信息 | director | 导演名字         | 导演名字               |
+
+```{r}
+rm(list = ls())#清空环境
+movie <- read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.csv",fileEncoding = "gbk") #读取数据
+head(movie)#电影数据示例
+```
+
+## 2.1 基本数据类型 {.unnumbered}
+
+### 2.1.1 数值型 {.unnumbered}
+
+数值型变量是一种定量数据类型，这类数据的取值是连续的。例如，电影数据集中的评分(score)就是用数值类型存放的。可以通过如下方式查看这一列对应的数据类型并对数值型数据进行加减乘除运算。
+
+```{r}
+class(movie$score)#查看数据类型
+
+#自己为变量附一个数值
+a = 2; class(a)
+exp(1000)  # 正无穷
+-10 / 0  # 负无穷
+exp(1000) / exp(990)  # NaN类型
+exp(10)
+```
+
+### 2.1.2 字符型 {.unnumbered}
+
+字符型变量指用于存储文字的变量类型。在R语言中，用单引号或双引号定义的即是字符型数据。
+
+```{r}
+#字符的定义
+a = "2"
+class(a)
+
+# 判断电影数据集中，变量“类型(type)","电影名称(name)"是不是字符型变量
+class(movie$name)
+class(movie$type)
+```
+
+### 2.1.3 逻辑型 {.unnumbered}
+
+逻辑型数据即取值为TRUE或者FALSE的数据类型。
+
+```{r}
+# 读入数据时设置把字符数据保留，不转换为factor
+movie = read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.csv", header = T, stringsAsFactors = F, fileEncoding = "gbk")
+movie$type[movie$name == "霸王别姬"] == "爱情" 
+
+# 想在数据集中挑选大于9分的喜剧电影名称（name）？
+movie$name[movie$type == "喜剧" & movie$score > 9]
+
+# 逻辑语句加减
+(1 == 2) + (3 < 4)
+```
+
+### 2.1.4 因子型数据 {.unnumbered}
+
+（可以先讲完【向量】后再回来讲什么是因子型数据）
+因子型数据是R语言中比较特殊的一个数据类型，它用于存储类别型变量。例如：性别（男性、女性），年龄分段（未成年人、成年人）等。除存储取值水平无序的类别型变量外，因子型数据还可以设置类别变量各水平的次序。因子型数据可使用命令factor()来定义。
+
+```{r}
+## 1.什么是因子型数据 ##
+(genders = factor(c("男", "女", "女", "男", "男"))) # 生成因子型变量
+
+(class = factor(c("Poor", "Improved", "Excellent"), ordered = T))#设置因子水平高低
+
+## 2.改变因子型数据各水平的编码顺序 ##
+(class = factor(c("Poor", "Improved", "Excellent"), ordered = T,
+              levels = c("Poor", "Improved", "Excellent")))
+
+## 3.因子型和字符型数据互相转换 ##
+
+# 输入原始字符变量
+all = c("男", "女", "女", "男", "男")
+
+# 将字符型变量变成因子型
+gender = as.factor(all)
+# 变换后的数据类型
+is.factor(gender)
+class(gender)#判断gender的数据类型
+```
+
+## 2.2 数据结构 {.unnumbered}
+
+```{r}
+rm(list = ls())#清理工作空间
+movie = read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.csv",fileEncoding = "gbk",stringsAsFactors = FALSE)#导入数据
+```
+
+### 2.2.1 向量 {.unnumbered}
+
+向量(vector)是所有数据结构中最基础的形式，用于存储同一种类型数据的一维数组。
+
+向量的基本操作包括向量创建、向量的索引提取以及集合的运算：
+
+```{r}
+## (1)向量创建##
+c(1, 1, 1, 2, 3, 3, 1, 2, 4, 1, 2, 4, 4, 2, 3, 4, 1, 2, 3, 4)
+c("a", "b", "c", "d")
+# seq(起始值, 终止值, 步长)
+seq(0, 10, by = 2)#生产0-10之间以2为间隔的等差数列
+1:10#生成1—10的连续数列
+
+##(2)向量索引##
+x<-c(1, 1, 1, 2, 3, 3)#生成向量
+x[5]# 引用x向量中的第5个元素
+which(x == 3)#查看x向量中3所在的位置
+which.max(x)#查看x向量中最大值所在的位置
+which.min(x)#查看x向量中最小值所在的位置
+
+##(3)集合运算##
+intersect(c(1, 2, 3, 3, 12, 4, 123, 12), c(1, 2, 3))#求交集
+union(c("中科大", "统计学"), c("中科大", "物理学"))#求并集
+setdiff(10:2, 5:3)#求差集
+```
+
+常见的向量类型包括数值型向量、字符串向量，这里分别介绍两种向量类型的基本操作。
+
+（1）数值型向量
+
+以下介绍`match()`, `cut()`, `sort()`, `order()`函数：
+
+```{r}
+## 数值型向量 ##
+x<-c(10,6,4,7,8)#创建数值向量
+min(x)#求最小值
+max(x)#求最大值
+range(x)#求范围
+```
+
+```{r}
+# match函数
+x <- c(1, 1, 1, 2, 3, 3, 1, 2, 4, 1, 2, 4, 4, 2, 3, 4, 1, 2, 3, 4)
+(y <- letters[x]) # letters是一个内置字符串，里面储存26个字母字符
+match(y, letters[1:4])
+
+x <- c("a", "c", "g", "h")
+letters
+match(x, letters)
+
+# cut函数
+(Age = c(72,21,39,74,62,76,64,43,94,44,87,43,42,35,39,46,45,33,24,38))#生成向量
+# 将年龄数据离散化  
+label = c('青年', '中年', '老年')  #设置标签
+(ages = cut(Age, breaks = c(20, 35, 50, 100), labels = label))#划分区间
+
+# sort和order函数
+(x = c(1,5,4,6,7))#生成向量
+sort(x)
+order(x)
+x[order(x)]
+```
+
+（2）字符串向量
+
+以下介绍`nchar()`, `cutsubstr`, `paste()`, `grep()`, `gsub()`函数：
+
+```{r}
+# nchar用来提取字符串的长度
+nchar("中国科学技术大学")
+# 看看数据集中的电影名字的长度分别是多少
+nchar(movie$name)
+# 中英文的字符长度计算方法有不同
+nchar("Welcome to follow the CluBear")
+# substr提取子字符串
+substr("中国科学技术大学", 1, 4)
+substr("统计学", 3, 5)
+# paste基本玩法
+paste(c("双11", "是个", "什么节日"), collapse = "")
+paste("A", 1:4)
+# paste花式玩法
+paste(1:4, collapse = "")
+paste(1:4, sep="")
+paste("A", 1:4, sep="_")
+
+txt = c("中科大", "CluBear", "双11", "生日")
+# 返回含有关键字的字符位置
+grep("Bear", txt)
+gsub("生日", "happy birthday", txt)
+# grep返回movie的director中包含“青春”的行号2，movie[2, ]即提取出movie数据集的第2行
+(index <- grep("陈凯歌", movie$director))
+(cmovie <- movie[index, ])
+
+salary = c("22万", "30万", "50万", "120万", "11万")
+(salary0 = gsub("万", "0000", salary))
+mean(as.numeric(salary0))
+median(as.numeric(salary0))  # 结果是科学计数法的形式
+```
+
+### 2.2.2 矩阵 {.unnumbered}
+
+上一部分讲述的向量只能够展示一维数据信息。如果想要展示二维数据信息，则需要用到矩阵的组织形式。矩阵(matrix)是一个二维数组，矩阵每一个元素的数据类型相同。
+
+首先，这里给出矩阵的创建与引用示例：
+
+```{r}
+##(1)创建##
+# 生成全部是0的矩阵
+(zero = matrix(1:9, nrow = 3, ncol = 3))
+# 生成一个对角全是1的矩阵,直接在diag中输入对角线向量即可
+(dig14 = diag(rep(1, 4)))
+
+##(2)创建##
+# 从已有数据转化成矩阵
+(M = matrix(1:12, nrow = 3, ncol = 4))
+# 生成指定对角元素的对角矩阵
+(N = diag(1:4))
+```
+
+下面介绍基本的矩阵操作方法：
+
+```{r}
+## 矩阵概览 ##
+# 查看矩阵的维度
+dim(M) 
+# 提取矩阵的行数
+nrow(M) 
+# 提取矩阵的列数
+ncol(M)
+##  [1] 4
+# 引用元素
+M[1, 2]
+M[1:2, 2:3]
+# 给行列命名
+colnames(M) = paste("x_", 1:4)
+rownames(M) = 1:3; M
+# 同样的命令可调用行列名
+colnames(M)
+rownames(M)
+# 将多个矩阵合并
+(A = matrix(1:9, nrow = 3, ncol = 3, byrow = T))
+(B = diag(11:13))
+rbind(A, B) 
+cbind(A, B) 
+```
+
+除了上述的基本操作，这里还介绍常用的矩阵数学计算操作：
+
+```{r}
+A + B #矩阵的加法
+A - B #矩阵的减法
+A * B #矩阵各元素对应相乘
+A %*% B #矩阵的乘法
+solve(B) #矩阵B的逆
+eigen(B) #矩阵B的特征值
+```
+
+### 2.2.3 数组 {.unnumbered}
+
+数组(array)是向量和矩阵的推广，用于表达三维或者三维以上的数据。
+
+```{r}
+##1.创建及引用##
+# 创建数组
+(result <- array(1:18,dim=c(3,3,2),dimnames = list(c("r1","r2","r3"),c("c1","c2","c3"),c("h1","h2"))))
+result[1,2,2]#获取单个元素
+result[1,,] #获取第一维度的数据
+
+##2. 操作数组元素##
+matrix1<-result[,,1]#获取数组中第1水平的矩阵
+matrix2<-result[,,2]#获取数组中第2水平的矩阵
+(add<-matrix1+matrix2)#矩阵相加
+```
+
+### 2.2.4 数据框 {.unnumbered}
+
+数据框(dataframe)是实际数据处理中最常用的数据结构形式。数据框的每一行可以存储一条数据记录，每一列可以存储不同类型的变量。
+
+首先介绍如何创建数据框：
+
+```{r}
+### 1.创建数据框 ###
+# 读入一个txt,csv等格式数据,即自成一个数据框
+movie <- read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.csv", fileEncoding = "gbk", stringsAsFactors = F)
+class(movie)
+# 自己创建
+director <- c("陈凯歌", "宫崎骏", "李廷香","詹姆斯·卡梅隆", "刘镇伟", "周星驰", "李安", "姜文", "张艺谋", "吴宇森","岩井俊二", "王家卫", "陈可辛"  )
+birthyear <- c(1952,1941,1964,1954,1952,1962,1954,1963,1950,1946,1963,1958,1962)
+gender <- c("男", "男", "女", "男", "男", "男", "男", "男", "男", "男", "男", "男", "男")
+directors <- data.frame(director, birthyear, gender); head(directors)
+```
+
+下面介绍数据框的变形——长宽表转换的操作方法：
+
+```{r}
+# install.packages("reshape2")
+library(reshape2)
+## (1) 宽表变长表 ##
+mWide = data.frame(Name = c("A", "B"), Type = c("喜剧", "动作"),
+                   GF2018 = c(6.5, 8.0), GF2019 = c(7.0, 7.5), GF2020 = c(8.1, 7.3))
+                   # 由于构造数据框时列名不可以为纯数字，在数字前添加GF
+# 将列名中的GF去掉
+colnames(mWide)[3:5] = gsub("GF", "", colnames(mWide)[3:5])
+mWide #查看原表
+(mLong = reshape2::melt(mWide, id.vars = c("Name", "Type"), variable.name = "Year")) 
+
+## (2) 长表变宽表 ##
+# 长表变宽表
+dcast(mLong, Name + Type ~ Year)
+```
+
+使用`**ply`族函数可以在R中对数据框进行向量化操作，从而实现数据透视表的功能，下面对此进行介绍。
+
+```{r}
+library(dplyr)
+# 根据电影类型进行分组，查看不同类型电影评分的平均水平
+popular_type_grouped = group_by(movie,type)#根据电影类型进行分组
+popular_type1=summarise(popular_type_grouped,
+                        mean_score=mean(score),#计算不同类型的平均评分
+                        max_score=max(score))#计算不同类型的最高评分
+head(popular_type1)
+#利用管道函数%>%省去中间变量命名
+popular_type2 = movie%>%group_by(type)%>%
+  summarise(mean_score=mean(score),#计算不同类型的平均评分
+            max_score=max(score))#计算不同类型的最高评分
+head(popular_type2)
+```
+
+### 2.2.5 列表 {.unnumbered}
+
+列表（list）是R语言中可以容纳各种类型的数据对象，如向量、矩阵、数据框，甚至一个列表也可以成为另一个列表的元素。
+
+首先介绍列表的创建方法与基本操作：
+
+```{r}
+##1.创建##
+(example = list("abc", 3:5, matrix(1, nrow = 3, ncol = 4), data.frame(x = 1:4, y = paste0("boy_", 1:4))))
+
+##2.基本操作##
+# 查看
+(complex = list(first = list(1:2), second = list(letters, list(matrix(1:4, nrow = 2, ncol = 2)))))
+str(complex)
+# 利用名字引用元素
+complex$first  
+# 利用序号引用元素
+complex[[1]]
+# 利用名字添加元素
+complex$new = 1:5; complex
+# 利用序号添加元素
+complex[[3]] = matrix(1, 2, 3); complex
+```
+
+与数据框相似，对列表也可以使用`**ply`族函数进行操作：
+
+```{r}
+##3. 列表中的**ply函数##
+# 老王耗子药的单价,单位(元/袋)
+(price = list(year2014 = 36:33, year2015 = 32:35, year2016 = 30:27))
+# lapply返回列表
+lapply(price, mean)
+# 求方差
+lapply(price, sd)
+# 求分位数
+lapply(price, quantile)
+# sapply默认返回向量或矩阵
+sapply(price, mean)
+sapply(price, sd)
+sapply(price, quantile)
+# mapply实现了将price与amount对应元素相乘的效果
+(amount = list(year2014 = rep(200, 4), year2015 = rep(100, 4), year2016 = rep(300, 4)))
+(income_quarter = mapply("*", price, amount))
+```
+
+## 2.3 数据的读入与写出 {.unnumbered}
+
+```{r}
+rm(list = ls())#清理工作空间
+movie = read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.csv",fileEncoding = "gbk",stringsAsFactors = FALSE)#导入数据
+```
+
+### 2.3.1 使用键盘输入数据 {.unnumbered}
+
+当读入数据较少时，可通过键盘输入数据。主要方式分为：直接输入以及利用R内置表格编辑器输入。
+
+```{r}
+scores <- c(61,66,84,80,100)
+#scores <- data.frame() #建立一个空数据框
+#scores <-edit(scores)  #触发R内置编辑器
+# 输入数据集
+mydatatxt<-"name gender age
+张三 M 20
+李四 F 23
+"
+(mydata<-read.table(header = TRUE,text = mydatatxt)) # 读取数据集
+```
+
+### 2.3.2 从带分隔符的文本文件导入数据 {.unnumbered}
+
+文本文件是一种常用的数据文件格式，函数read.table()可以从带分隔符的文本文件中导入数据，并生成一个数据框。常见的文本文件的数据格式为csv，读入csv文件可使用专有函数read.csv()。
+
+```{r}
+### 1. read.rable() ###
+#从txt中读入,分隔符为"\t"
+tes = read.table("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.txt", header = TRUE, sep = "\t",fileEncoding = "GBK"); head(tes)
+
+### 2. read.csv() ###
+#专用函数read.csv
+movie_csv = read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.csv",fileEncoding = "GBK"); head(movie_csv)
+
+```
+
+### 2.3.3 导入Excel数据 {.unnumbered}
+
+```{r}
+# install.packages("readxl")
+library("readxl") # 加载包
+# 其中col_names参数仍然是为了设定是否把第一行当做变量名
+movie_excel = data.frame(read_excel("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.xlsx", col_names = TRUE));head(movie_excel)
+```
+
+### 2.3.4 逐行读入数据 {.unnumbered}
+
+在文件较大或格式较为复杂的情况下，直接将文件读入内存会花费很长时间。因此，可以每次读入一行文件，进行逐行处理。
+
+```{r}
+#建立与文件的连接
+con<-file("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.csv", encoding = "GBK")
+#逐行读入所有数据
+line_all<-readLines(con)
+#读取前10行数据
+line_10<-readLines(con,n=10)
+line_10
+close(con)#关闭连接
+split_line=strsplit(line_all,",")#分隔符为”,”
+head(split_line,3)
+```
+
+## 2.4 数据集管理及预处理 {.unnumbered}
+
+```{r}
+rm(list = ls())#清理工作空间
+movie = read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/top250.csv",fileEncoding = "gbk",stringsAsFactors = FALSE)#导入数据
+```
+
+### 2.4.1 了解数据概况 {.unnumbered}
+
+拿到数据集后需要先查看数据的概况，主要通过R语言中的汇总函数实现。首先使用str()函数查看每列数据的类型，了解取值情况。接下来，可通过summary()函数查看每列数据的汇总统计。
+
+```{r}
+str(movie)
+summary(movie)
+```
+
+### 2.4.2 变量类型转换 {.unnumbered}
+
+#### 1.基本数据类型之间的转换 {.unnumbered}
+
+变量类型转换可以分为两步，首先利用is族函数判断变量类型，再通过as族函数转换变量类型。
+
+```{r}
+a="1"#将1赋值给a
+is.numeric(a)#判断a是否是数值型数据
+a<-as.numeric(a)#将a转换为数值型数据
+is.numeric(a)#再次判断a是否是数值型数据
+```
+
+#### 2.不同结构化数据类型间的转换 {.unnumbered}
+
+结构化数据类型之间的转换与基本数据类型转换相似，首先使用class()函数判断数据结构，再使用as族函数进行转换。
+
+```{r}
+tbl <- table(movie$nation)#统计不同国家的频次
+class(tbl)#查看数据格式
+tbl <- as.data.frame(tbl)#转化为数据框
+class(tbl)
+```
+
+#### 3.日期值转换 {.unnumbered}
+
+日期类型的变量需要使用如下方法进行转换。
+
+```{r}
+###(1)将字符转换成Date日期格式###
+# 函数head用来查看数据前6个元素，函数class用来查看对象数据类型
+head(movie$showtime)
+class(movie$showtime)
+movie$showtime = as.Date(movie$showtime)
+head(movie$showtime)
+class(movie$showtime)
+as.Date('1/15/2020', format = '%m/%d/%Y') #对日/月/年类型字符进行日期转换
+###(2)将字符转换成POSIXct/POSIXlt时间格式###
+as.POSIXct(1472562988, origin = "1960-01-01")#日期值转换，以"1960-01-01"为起点
+```
+
+### 2.4.3 时间型数据的操作 {.unnumbered}
+
+针对时间型数据的常用操作为：特征提取、差值运算、排序运算。
+
+#### 1.特征提取 {.unnumbered}
+
+```{r}
+# install.packages("lubridate")
+library(lubridate)#加载lubridate包
+t = "2020-11-20 01:30:29"
+year(t)#提取年份
+month(t)#提取月份
+mday(t)#提取日期是一个月中的第几天
+wday(t)#提取日期是一周中的第几天
+hour(t)#取出日期中的小时数
+minute(t)#取出日期中的分钟数
+second(t)#取出日期中的秒
+```
+
+#### 2.插值运算 {.unnumbered}
+
+```{r}
+# 求任意两个日期距离的天数
+begin = as.Date("2016-03-04")
+end = as.Date("2016-05-08")
+(during = end - begin)
+# 求任意两个日期距离的周数和小时数
+difftime(end, begin, units = "weeks")
+difftime(end, begin, units = "hours")
+```
+
+#### 3.排序 {.unnumbered}
+
+```{r}
+# 单独对时间进行排序
+head(sort(movie$showtime))
+# 对数据表格中的数据按照时间顺序排列,这里只选取前6行，对电影名称、上映日期做展示
+head(movie[order(movie$showtime), c("name", "showtime")])
+
+```
+
+### 2.4.4 数据集合并 {.unnumbered}
+
+实践中，常常需要将不同表的信息进行合并。在R语言中可以使用函数merge()来实现数据框的合并。
+
+```{r}
+director <- c("陈凯歌", "宫崎骏", "李廷香","詹姆斯·卡梅隆", "刘镇伟", "周星驰", "李安", "姜文", "张艺谋", "吴宇森","岩井俊二", "王家卫", "陈可辛"  )
+birthyear <- c(1952,1941,1964,1954,1952,1962,1954,1963,1950,1946,1963,1958,1962)
+gender <- c("男", "男", "女", "男", "男", "男", "男", "男", "男", "男", "男", "男", "男")
+directors <- data.frame(director, birthyear, gender); 
+# merge实现的效果是：将movie和directors按照列director匹配并合并起来
+(movie.star = merge(movie[1:10, ], directors,by = "director")) 
+```
+
+### 2.4.5 数据缺失、异常 {.unnumbered}
+
+在R语言中检测缺失值可使用is.na()函数。该函数将会返回逻辑值TRUE或FALSE，TRUE代表缺失，FALSE代表未缺失。数据中的异常值为不符合常理或与总体取值高度不一致的数据。通常对数据是否缺失、异常的判断是在数据汇总之后进行的。
+
+```{r}
+###(1)删除法###
+movie_new=na.omit(movie)#保留完整观测的行
+
+###(2)插补法###
+#将均值替换电影时长缺失值
+movie[is.na(movie$duration), ]$duration<-mean(movie$duration, na.rm = T)
+movie[which(movie$score<0), ]$score<-NA#将异常值赋值为NA
+movie[is.na(movie$score), ]$score<-mean(movie$score, na.rm = T)#赋值均值
+```
+
+## 习题答案 {.unnumbered}
+
+### 题目 2.1 {.unnumbered}
+
+如何理解R语言中的“向量化”操作？请举一个例子说明。
+
+对于一个向量$x$，“向量化”操作指命令可以直接对向量的每个元素进行操作，不需要使用循环实现计算。比如命令语句$x$+2或者$x^3$，向量$x$中的每个元素都加2或每个元素都变成三次幂。
+
+### 题目 2.2 {.unnumbered}
+
+请描述R语言中矩阵与数据框之间的两个不同点。
+
+a.数据框实际上是由多个长度相同的向量组成，而矩阵实际上是一个二维向量。
+
+b.数据框所包含的向量可以是不同数据类型的，而矩阵仅能包含一种数据类型。
+
+### 题目 2.3 {.unnumbered}
+
+对矩阵的操作：
+
+1.在R中生成生成下面的矩阵A。
+
+$$A=\left(\begin{array}{lll}
+1 & 2 & 3 \\
+4 & 2 & 1 \\
+2 & 3 & 0
+\end{array}\right)$$
+
+```{r}
+#构造矩阵
+(A=matrix(c(1,4,2,2,2,3,3,1,0),nrow=3))
+```
+
+2.计算矩阵A的转置矩阵B和逆矩阵C。
+
+```{r}
+(B=t(A))#求转置矩阵
+(C=solve(A))#求逆矩阵
+```
+
+3.求矩阵A和矩阵C的乘积。
+
+```{r}
+A%*%C#矩阵乘积
+```
+
+### 题目 2.4（实训题目） {.unnumbered}
+
+实训题目：使用电视剧网播量数据集，该数据集收集了4266条电视剧的信息。请完成以下任务。
+
+a.  获取数据集，查看数据概况。
+
+```{r}
+tv<-read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/电视剧播量.csv",fileEncoding="gbk",stringsAsFactors = F)#读取数据
+head(tv)#查看数据前几行
+
+```
+
+b.  删除数据集中剧名缺失的值。
+
+```{r}
+tv<-tv[-which(tv$剧名 == "null"),]#删除缺失数据
+```
+
+c.  不考虑缺失数据影响，计算电视剧的平均得分。
+
+```{r}
+#将缺失数据处理成NA
+tv[which(tv$得分=="null"),]$得分 = NA
+tv[which(tv$得分=="."),]$得分 = NA
+#转换数据格式
+tv$得分 <- as.numeric(tv$得分)
+#计算平均得分
+mean(tv$得分, na.rm = T)
+
+```
+
+### 题目 2.5 （实训题目） {.unnumbered}
+
+实训题目：使用手机游戏数据集，该数据集收集了1141条手机游戏信息及评分。请完成以下任务。
+
+a.  获取数据集，查看数据概况。
+
+```{r}
+game<-read.csv("/Users/lchen1307/R-Lab/attachment/data/chapter2/安卓手机游戏.csv",fileEncoding = "gbk",stringsAsFactors = F)#读取数据
+summary(game)#查看数据概况
+```
+
+b.  提取热度中的数值部分，计算各游戏类型的热度均值，找出平均热度最高的游戏类型。
+
+```{r,eval=FALSE}
+#加载包
+library(stringr)
+library(dplyr)
+```
+
+```{r,include=FALSE}
+#加载包
+library(stringr)
+library(dplyr)
+```
+
+```{r}
+#转换数据格式
+game$hot<-as.numeric(str_extract(game$热度,"\\d+"))
+#计算热度均值
+hot_aver<-game%>%
+  group_by(类别)%>%
+  summarise(meanhot=mean(hot,na.rm = T))#平均热度
+#找出平均热度最高的游戏类型
+(hot_aver=hot_aver[order(hot_aver$meanhot, decreasing = T), ])
+
+```
+
+平均热度最高的游戏类别为体育运动。
+
+c.  计算各游戏类型的平均评分，最高评分，最低评分，评分标准差，并作简要分析。
+
+```{r,warning=FALSE}
+grade_aver<-game%>%
+  group_by(类别)%>%
+  summarise(meangrade=mean(评分,na.rm = T),#平均评分
+            maxgrade=max(评分,na.rm = T),#最高评分
+            mingrade=min(评分,na.rm = T),#最低评分
+            sdgrade=sd(评分,na.rm = T))#评分标准差
+(grade_aver=grade_aver[order(grade_aver$meangrade, decreasing = T), ])#按照平均得分排序
+
+```
+
+分析：虽然平均热度最高的游戏类别为体育运动，但平均评分最高的游戏类别为角色扮演，同时角色扮演的评分波动较大。
