@@ -1,0 +1,289 @@
+---
+title: "09-ch9"
+output: html_document
+date: "2026-05-21"
+---
+
+
+## 一、尼罗河数据集
+
+时间序列分析案例：尼罗河年度流量的 ARIMA 建模
+数据：R 内置数据集 Nile（1871-1970 年阿斯旺水文站年流量，单位 10^8 m³）
+
+### 1.0 加载包
+
+```{r}
+# install.packages(c("forecast", "tseries"))
+rm(list = ls())
+library(forecast)
+library(tseries)
+```
+
+### 1.1 数据加载与可视化
+
+```{r}
+data("Nile")
+print(Nile)
+summary(Nile)
+length(Nile)
+frequency(Nile)
+```
+
+
+```{r}
+plot(Nile, type = "o", pch = 20, col = "steelblue",  # type = o, 同时画点和线; pch 实心圆
+     main = "Annual Nile Flow (1871-1970)",
+     xlab = "Year", ylab = "Flow (10^8 m³)")
+abline(v = 1898, col = "red", lty = 2)   # 阿斯旺大坝建成年份 (垂直线, lty = 2 虚线)
+grid() # 网格线
+```
+
+观察到：
+
+1. 1898 年存在明显突变（阿斯旺大坝建成）
+2. 两段内部都没有明显趋势，都围绕各自均值波动，没有持续上升或下降的斜率，呈现出分段平稳的典型特征
+3. 1913 年存在异常值点，这是在历史中记录的尼罗河著名的枯水年，由于这是真实的水文数据，因此不能够剔除
+4. 方差大致稳定 -> 不需要对数变换或 Box-Cox 变换
+
+结论：
+
+尼罗河流量序列因为 1898 年的人为干预而非平稳，但波动幅度稳定、没有趋势和季节性，因此适合用一阶差分把它变平稳，然后建立一个简单的 ARIMA(p,1,q) 模型。
+
+
+### 1.2 平稳性检验
+
+```{r}
+# ADF 检验：H0 = 非平稳
+adf.test(Nile)
+# 若 p > 0.05，认为非平稳，需要差分
+```
+
+### 1.3 差分
+
+```{r}
+ndiffs(Nile)                # 建议差分阶数 d
+nile_diff <- diff(Nile)
+ 
+plot(nile_diff, main = "The series after first-order differencing", ylab = "Difference Value", col = "darkgreen")
+abline(h = 0, lty = 2) # 水平线、虚线
+ 
+adf.test(nile_diff)         # 再次检验，p < 0.05 → 平稳
+```
+
+结论：一阶差分后，尼罗河流量序列呈现出均值围绕 0、方差稳定、无趋势、无周期的典型平稳特征。平稳。
+
+### 1.4 ACF/PACF 定阶
+
+```{r}
+par(mfrow = c(1, 2))
+acf(nile_diff,  main = "ACF")
+pacf(nile_diff, main = "PACF")
+par(mfrow = c(1, 1))
+```
+
+经验判读：
+
+1. ACF 在滞后 1 处截尾  → MA(1)
+2. PACF 在滞后 1 处截尾 → AR(1)
+3. 因此候选模型：ARIMA(0,1,1)、ARIMA(1,1,0)、ARIMA(1,1,1)
+
+### 1.5 模型拟合与对比
+
+```{r}
+fit1 <- Arima(Nile, order = c(0, 1, 1))
+fit2 <- Arima(Nile, order = c(1, 1, 0))
+fit3 <- Arima(Nile, order = c(1, 1, 1))
+fit_auto <- auto.arima(Nile, seasonal = FALSE, stepwise = FALSE) # 自动尝试很多组 (p, d, q)，选出 AIC 最小的那个；关掉"逐步搜索"，让它穷举更多组合。默认的逐步搜索快但可能漏掉好模型，关掉后慢一点但更可靠
+
+# 信息准则对比（AIC/BIC 越小越好）
+data.frame(
+  Model = c("ARIMA(0,1,1)", "ARIMA(1,1,0)", "ARIMA(1,1,1)", "auto.arima"),
+  AIC   = c(AIC(fit1), AIC(fit2), AIC(fit3), AIC(fit_auto)),
+  BIC   = c(BIC(fit1), BIC(fit2), BIC(fit3), BIC(fit_auto))
+)
+
+# 选 AIC 最小的 ARIMA(0,1,1) 作为最终模型
+final_model <- fit1
+summary(final_model)
+```
+
+MA(1) 系数 −0.7329 高度显著（t = 6.41 > 2）、MAPE = 12.94% 处于良好区间（< 20%）、MASE = 0.842 < 1（比朴素预测好 16%） —— 三项核心指标全部通过，ARIMA(0,1,1) 模型拟合合格，可进入残差诊断阶段。
+
+
+### 1.6 模型诊断
+
+```{r}
+checkresiduals(final_model)
+# 同时给出：残差时序图、残差ACF、Ljung-Box检验、残差分布
+```
+
+假设检验：
+
+* H0：残差是白噪声（各阶自相关均为 0）
+* H1：残差有自相关（模型有遗漏）
+* p >= 0.05，不能拒绝原假设，因此残差是白噪声
+
+
+各种图的解读：
+
+* ARIMA(0,1,1) 模型的残差诊断整体表现良好。从残差时序图看，序列围绕 0 随机波动，没有趋势或周期，方差稳定，仅 1913 年附近有一个低值，对应历史上著名的枯水年，属于真实事件而非模型缺陷。
+* 残差 ACF 图中所有滞后阶的柱子全部落在置信带内，说明残差之间不存在显著的自相关，模型已经把数据中可预测的结构提取完毕。
+* 残差直方图呈现近似钟形分布，整体贴合正态曲线，仅因 1913 年的异常值导致左尾略长，但偏离程度轻微，不影响模型使用。
+
+综合三张诊断图可以判定残差近似白噪声，ARIMA(0,1,1) 模型拟合充分，可以进入下一步预测应用。
+
+
+### 1.7 预测
+
+```{r}
+fc <- forecast(final_model, h = 10)   # 预测未来 10 年
+print(fc)
+ 
+plot(fc, main = "The prediction of Nile flow with ARIMA(0,1,1) ", xlab = "year", ylab = "flow (10^8 m³)")
+abline(v = 1898, col = "red", lty = 2) 
+grid()
+```
+
+结论： 阴影中央的水平线就是点估计，约 798（10⁸ m³），表示 ARIMA(0,1,1) 认为未来 10 年尼罗河流量将稳定在这一水平。两层阴影分别是 80% 和 95% 预测区间，预测期越远区间越宽，反映了"远未来更不确定"的常识。点估计呈水平直线是该模型的特征，符合数据本身无趋势、无季节性的实际情况。
+
+
+## 二、网站在线用户数据集
+
+时间序列分析案例：服务器每分钟在线用户数的 ARIMA 建模
+数据：R 内置数据集 WWWusage（某互联网服务器连续 100 分钟在线用户数，单位：人）
+
+### 2.0 加载包
+
+```{r}
+# install.packages(c("forecast", "tseries"))
+rm(list = ls())
+library(forecast)
+library(tseries)
+```
+
+### 2.1 数据加载与可视化
+
+```{r}
+data("WWWusage")
+print(WWWusage)
+summary(WWWusage)
+length(WWWusage)
+frequency(WWWusage)
+```
+
+```{r}
+plot(WWWusage, type = "o", pch = 20, col = "steelblue",  # type = o, 同时画点和线; pch 实心圆
+     main = "Internet Users Connected per Minute",
+     xlab = "Minute", ylab = "Number of Users")
+grid() # 网格线
+```
+
+观察到：
+
+1. 序列呈现明显的整体上升趋势，从最初约 90 人上升到末段约 220 人
+2. 中段（约第 50-60 分钟）出现一个明显的局部回落，随后继续抬升，体现真实流量数据的波动
+3. 波动幅度未随水平显著放大，方差大致稳定 -> 不需要对数变换或 Box-Cox 变换
+4. 没有周期性或季节性规律（频率为 1，分钟级数据无日历季节性）
+
+结论：
+
+序列存在明显趋势但方差稳定、没有季节性，因此适合用一阶差分把它变平稳，然后建立一个 ARIMA(p,1,q) 模型。与尼罗河案例不同的是，本数据的趋势更为强烈、连续，差分后的自相关结构也更复杂。
+
+
+### 2.2 平稳性检验
+
+```{r}
+# ADF 检验：H0 = 非平稳
+adf.test(WWWusage)
+# 若 p > 0.05，认为非平稳，需要差分
+```
+
+p 值远大于 0.05，强烈支持非平稳假设，必须差分。
+
+### 2.3 差分
+
+```{r}
+ndiffs(WWWusage)             # 建议差分阶数 d
+www_diff <- diff(WWWusage)   # 一阶差分
+
+plot(www_diff, main = "The series after first-order differencing", ylab = "Difference Value", col = "darkgreen")
+abline(h = 0, lty = 2) # 水平线、虚线
+
+adf.test(www_diff)           # 再次检验，p < 0.05 → 平稳
+```
+
+结论：一阶差分后，ADF 检验 p 值显著下降，序列均值围绕 0 波动、方差稳定、无趋势、无周期，达到平稳状态。`ndiffs()` 也建议 d = 1，与图形判断一致。
+
+### 2.4 ACF/PACF 定阶
+
+```{r}
+par(mfrow = c(1, 2))
+acf(www_diff,  main = "ACF")
+pacf(www_diff, main = "PACF")
+par(mfrow = c(1, 1))
+```
+
+经验判读：
+
+1. ACF 呈缓慢衰减状（拖尾），未在某一阶突然截断 → 倾向 AR 模型
+2. PACF 在滞后 2-3 阶处截尾，之后全部落入置信带 → 倾向 AR(2) 或 AR(3)
+3. 因此候选模型：ARIMA(2,1,0)、ARIMA(3,1,0)、ARIMA(1,1,1)
+
+### 2.5 模型拟合与对比
+
+```{r}
+fit1 <- Arima(WWWusage, order = c(2, 1, 0))
+fit2 <- Arima(WWWusage, order = c(3, 1, 0))
+fit3 <- Arima(WWWusage, order = c(1, 1, 1))
+fit_auto <- auto.arima(WWWusage, seasonal = FALSE, stepwise = FALSE) # 自动尝试很多组 (p, d, q)，选出 AIC 最小的那个；关掉"逐步搜索"，让它穷举更多组合
+
+# 信息准则对比（AIC/BIC 越小越好）
+data.frame(
+  Model = c("ARIMA(2,1,0)", "ARIMA(3,1,0)", "ARIMA(1,1,1)", "auto.arima"),
+  AIC   = c(AIC(fit1), AIC(fit2), AIC(fit3), AIC(fit_auto)),
+  BIC   = c(BIC(fit1), BIC(fit2), BIC(fit3), BIC(fit_auto))
+)
+
+# 选 AIC 最小的 ARIMA(3,1,0) 作为最终模型
+final_model <- fit2
+summary(final_model)
+```
+
+AR(1)、AR(2)、AR(3) 系数均高度显著（|t| 均大于 2）、MAPE 处于优秀区间（< 5%）、MASE 远小于 1（明显优于朴素预测） —— 三项核心指标全部通过，ARIMA(3,1,0) 模型拟合合格，可进入残差诊断阶段。
+
+### 2.6 模型诊断
+
+```{r}
+checkresiduals(final_model)
+# 同时给出：残差时序图、残差ACF、Ljung-Box检验、残差分布
+```
+
+假设检验：
+
+* H0：残差是白噪声（各阶自相关均为 0）
+* H1：残差有自相关（模型有遗漏）
+* p >= 0.05，不能拒绝原假设，因此残差是白噪声
+
+
+各种图的解读：
+
+* ARIMA(3,1,0) 模型的残差时序图围绕 0 随机波动，没有趋势、周期或方差变化，未见明显异常点
+* 残差 ACF 图中所有滞后阶的柱子全部落在置信带内，说明高阶 AR 项已经把序列中的自相关结构充分吸收
+* 残差直方图近似钟形，整体贴合正态曲线，无显著偏态或厚尾
+
+综合三张诊断图可以判定残差近似白噪声，ARIMA(3,1,0) 模型拟合充分，可以进入下一步预测应用。
+
+
+### 2.7 预测
+
+```{r}
+fc <- forecast(final_model, h = 20)   # 预测未来 20 分钟
+print(fc)
+
+plot(fc, main = "The prediction of internet users with ARIMA(3,1,0)", xlab = "Minute", ylab = "Number of Users")
+grid()
+```
+
+结论：AR(3) 模型的点估计不再是水平直线，而是会沿着最近几分钟的动量平滑外推 —— 这是高阶 AR 模型与简单 MA(1) 模型的关键区别。两层阴影分别是 80% 和 95% 预测区间，预测期越远区间越宽，反映了"远未来更不确定"的常识。整体预测结果与数据末段的上升趋势一致，符合互联网流量数据的实际特征。
+
+
